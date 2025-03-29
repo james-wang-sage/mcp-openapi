@@ -138,26 +138,6 @@ The server is now ready to use. When you add new OpenAPI specifications to your 
    - Assist in API integration
    - Generate API-aware code snippets
 
-## Examples
-
-1. Start the server with default settings:
-```bash
-npx @reapi/mcp-openapi
-```
-
-2. Specify a custom directory containing your API specs:
-```bash
-npx @reapi/mcp-openapi --dir ./my-apis
-```
-
-3. Custom catalog and dereferenced directories:
-```bash
-npx @reapi/mcp-openapi --dir ./apis --catalog-dir _my_catalog --dereferenced-dir _my_dereferenced
-```
-
-## Requirements
-
-- Node.js >= 16
 
 ## Integration
 
@@ -219,13 +199,16 @@ This server implements the Model Context Protocol, making it compatible with LLM
    - Enable natural language queries to find relevant API endpoints
    - Improve search accuracy using embeddings and vector similarity
 
-2. **Code Template Generation**
+2. **Remote Specs Sync**
+   - Support syncing OpenAPI specifications from remote sources
+
+3. **Code Template Generation**
    - Add support for code templates based on API specifications
    - Generate boilerplate code for API integrations
    - Provide language-specific client code generation
    - Support multiple programming languages and frameworks
 
-3. **Community Contributions**
+4. **Community Contributions**
    - Have ideas to improve the MCP OpenAPI server?
    - Want to add new features or enhance existing ones?
    - Submit your ideas through issues or pull requests
