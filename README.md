@@ -45,6 +45,60 @@ npm install -g @reapi/mcp-openapi
 reapi-mcp-openapi --dir /path/to/specs
 ```
 
+## Cursor Configuration
+
+To integrate the MCP OpenAPI server with Cursor IDE, you have two options for configuration locations:
+
+### Option 1: Project-specific Configuration (Recommended)
+Create a `.cursor/mcp.json` file in your project directory:
+
+```json
+{
+  "mcpServers": {
+    "@reapi/mcp-openapi": {
+      "command": "npx",
+      "args": ["-y", "@reapi/mcp-openapi", "--dir", "/path/to/your/specs"],
+      "env": {}
+    }
+  }
+}
+```
+
+### Option 2: Global Configuration
+Create or edit `~/.cursor/mcp.json` in your home directory to make the server available across all projects:
+
+```json
+{
+  "mcpServers": {
+    "@reapi/mcp-openapi": {
+      "command": "npx",
+      "args": ["-y", "@reapi/mcp-openapi", "--dir", "/path/to/your/specs"],
+      "env": {}
+    }
+  }
+}
+```
+
+### Enable in Cursor Settings
+
+After adding the configuration:
+
+1. Open Cursor IDE
+2. Go to Settings > Cursor Settings > MCP
+3. Enable the @reapi/mcp-openapi server
+4. Click the refresh icon next to the server to apply changes
+
+The server is now ready to use. When you add new OpenAPI specifications to your directory, you can refresh the catalog by:
+
+1. Opening Cursor's chat panel
+2. Typing one of these prompts:
+   ```
+   "Please refresh the API catalog"
+   "Reload the OpenAPI specifications"
+   ```
+
+> **Note**: Replace `/path/to/your/specs` with the actual path to your OpenAPI specification files.
+
 ## Usage
 
 ```bash
@@ -129,10 +183,6 @@ npx @reapi/mcp-openapi --dir ./my-apis
 npx @reapi/mcp-openapi --dir ./apis --catalog-dir _my_catalog --dereferenced-dir _my_dereferenced
 ```
 
-## Requirements
-
-- Node.js >= 16
-
 ## Integration
 
 This server implements the Model Context Protocol, making it compatible with LLM-powered development tools. It's designed to work seamlessly with:
@@ -168,104 +218,4 @@ This server implements the Model Context Protocol, making it compatible with LLM
    - Load an operation by operationId
    - Inputs:
      - `specId` (string): API specification ID
-     - `operationId` (string): Operation ID to load
-   - Returns: Complete operation details
-
-6. `load-api-operation-by-path-and-method`
-   - Load an operation by path and method
-   - Inputs:
-     - `specId` (string): API specification ID
-     - `path` (string): API endpoint path
-     - `method` (string): HTTP method
-   - Returns: Complete operation details
-
-7. `load-api-schema-by-schemaName`
-   - Load a schema by schemaName
-   - Inputs:
-     - `specId` (string): API specification ID
-     - `schemaName` (string): Name of the schema to load
-   - Returns: Complete schema details
-
-## Roadmap
-
-1. **Semantic Search**
-   - Implement semantic search capabilities for API operations and schemas
-   - Enable natural language queries to find relevant API endpoints
-   - Improve search accuracy using embeddings and vector similarity
-
-2. **Code Template Generation**
-   - Add support for code templates based on API specifications
-   - Generate boilerplate code for API integrations
-   - Provide language-specific client code generation
-   - Support multiple programming languages and frameworks
-
-3. **Community Contributions**
-   - Have ideas to improve the MCP OpenAPI server?
-   - Want to add new features or enhance existing ones?
-   - Submit your ideas through issues or pull requests
-   - Join the discussion and help shape the future of API integration with LLMs
-
-## Example Prompts in Cursor
-
-Here are some example prompts you can use in Cursor IDE to interact with your APIs:
-
-1. **Explore Available APIs**
-   ```
-   "Show me all available APIs in the catalog with their operations"
-   "List all API specifications and their endpoints"
-   ```
-
-2. **API Operation Details**
-   ```
-   "Show me the details of the create pet API endpoint"
-   "What are the required parameters for creating a new pet?"
-   "Explain the response schema for the pet creation endpoint"
-   ```
-
-3. **Schema and Mock Data**
-   ```
-   "Generate mock data for the Pet schema"
-   "Create a valid request payload for the create pet endpoint"
-   "Show me examples of valid pet objects based on the schema"
-   ```
-
-4. **Code Generation**
-   ```
-   "Generate an Axios client for the create pet API"
-   "Create a TypeScript interface for the Pet schema"
-   "Write a React hook that calls the create pet endpoint"
-   ```
-
-5. **API Integration Assistance**
-   ```
-   "Help me implement error handling for the pet API endpoints"
-   "Generate unit tests for the pet API client"
-   "Create a service class that encapsulates all pet-related API calls"
-   ```
-
-6. **Documentation and Usage**
-   ```
-   "Show me example usage of the pet API with curl"
-   "Generate JSDoc comments for the pet API client methods"
-   "Create a README section explaining the pet API integration"
-   ```
-
-7. **Validation and Types**
-   ```
-   "Generate Zod validation schema for the Pet model"
-   "Create TypeScript types for all pet-related API responses"
-   "Help me implement request payload validation for the pet endpoints"
-   ```
-
-8. **API Search and Discovery**
-   ```
-   "Find all endpoints related to pet management"
-   "Show me all APIs that accept file uploads"
-   "List all endpoints that return paginated responses"
-   ```
-
-These prompts demonstrate how to leverage the MCP server's capabilities for API development. Feel free to adapt them to your specific needs or combine them for more complex tasks.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. 
+     - `
