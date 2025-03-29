@@ -160,6 +160,7 @@ The server is now ready to use. When you add new OpenAPI specifications to your 
    - Search for schemas across specifications
    - Inputs:
      - `query` (string): Search query
+     - `specId` (optional string): Specific API specification ID to search
    - Returns: Matching schemas from the API catalog
 
 5. `load-api-operation-by-operationId`

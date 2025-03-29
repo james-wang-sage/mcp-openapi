@@ -119,11 +119,12 @@ export class McpService {
       "Search for schemas across specifications",
       {
         query: z.string(),
+        specId: z.string().optional(),
       },
       async (args, extra) => {
         try {
-          this.logger.debug('Searching API schemas', { query: args.query });
-          const schemas = await this.specExplorer.searchSchemas(args.query);
+          this.logger.debug('Searching API schemas', { query: args.query, specId: args.specId });
+          const schemas = await this.specExplorer.searchSchemas(args.query, args.specId);
           return {
             content: [
               { type: "text", text: stringify({ schemas }, { indent: 2 }) },
