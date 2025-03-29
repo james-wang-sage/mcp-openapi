@@ -25,15 +25,23 @@ If the file already exists, merge this configuration with existing entries:
 ```json
 {
   "mcpServers": {
+    "existing-server": {
+      // ... existing configuration ...
+    },
     "@reapi/mcp-openapi": {
       "command": "npx",
-      "args": ["-y", "@reapi/mcp-openapi", "--dir", "<USER_PROVIDED_PATH>"],
+      "args": ["-y", "@reapi/mcp-openapi@latest", "--dir", "<USER_PROVIDED_PATH>"],
       "env": {}
+    },
+    "another-server": {
+      // ... existing configuration ...
     }
-    // ... keep other existing configurations ...
-  }
+  },
+  "other": {}
 }
 ```
+
+> **Note**: We use `@latest` tag to ensure you always get the most recent version with latest features and improvements.
 
 Example of merging with existing configuration:
 
@@ -45,7 +53,7 @@ Example of merging with existing configuration:
     },
     "@reapi/mcp-openapi": {
       "command": "npx",
-      "args": ["-y", "@reapi/mcp-openapi", "--dir", "<USER_PROVIDED_PATH>"],
+      "args": ["-y", "@reapi/mcp-openapi@latest", "--dir", "<USER_PROVIDED_PATH>"],
       "env": {}
     },
     "another-server": {

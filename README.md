@@ -42,7 +42,7 @@ Create a `.cursor/mcp.json` file in your project directory. This option is recom
   "mcpServers": {
     "@reapi/mcp-openapi": {
       "command": "npx",
-      "args": ["-y", "@reapi/mcp-openapi", "--dir", "./specs"],
+      "args": ["-y", "@reapi/mcp-openapi@latest", "--dir", "./specs"],
       "env": {}
     }
   }
@@ -50,6 +50,8 @@ Create a `.cursor/mcp.json` file in your project directory. This option is recom
 ```
 
 > **Tip**: Using a relative path like `./specs` makes the configuration portable and easier to share across team members.
+> 
+> **Note**: We recommend using `@latest` tag as we frequently update the server with new features and improvements.
 
 ### Option 2: Global Configuration
 Create or edit `~/.cursor/mcp.json` in your home directory to make the server available across all projects:
@@ -59,12 +61,14 @@ Create or edit `~/.cursor/mcp.json` in your home directory to make the server av
   "mcpServers": {
     "@reapi/mcp-openapi": {
       "command": "npx",
-      "args": ["-y", "@reapi/mcp-openapi", "--dir", "/path/to/your/specs"],
+      "args": ["-y", "@reapi/mcp-openapi@latest", "--dir", "/path/to/your/specs"],
       "env": {}
     }
   }
 }
 ```
+
+> **Note**: Use `@latest` tag to ensure you always get the most recent version with latest features and improvements.
 
 ### Enable in Cursor Settings
 
