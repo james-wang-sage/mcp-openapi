@@ -39,6 +39,47 @@ reapi-mcp-openapi [options]
 - `-h, --help`: Display help information
 - `-V, --version`: Display version information
 
+### OpenAPI Specification Requirements
+
+1. Place your OpenAPI 3.x specifications in the target directory:
+   - Supports both JSON and YAML formats
+   - Files should have `.json`, `.yaml`, or `.yml` extensions
+   - Scanner will automatically discover and process all specification files
+
+2. Specification ID Configuration:
+   - By default, the filename (without extension) is used as the specification ID
+   - To specify a custom ID, add `x-spec-id` in the OpenAPI info object:
+   ```yaml
+   openapi: 3.0.0
+   info:
+     title: My API
+     version: 1.0.0
+     x-spec-id: my-custom-api-id  # Custom specification ID
+   ```
+   
+   > **Important**: Setting a custom `x-spec-id` is crucial when working with multiple specifications that have:
+   > - Similar or identical endpoint paths
+   > - Same schema names
+   > - Overlapping operation IDs
+   >
+   > The spec ID helps distinguish between these similar resources and prevents naming conflicts. For example:
+   > ```yaml
+   > # user-service.yaml
+   > info:
+   >   x-spec-id: user-service
+   > paths:
+   >   /users:
+   >     get: ...
+   > 
+   > # admin-service.yaml
+   > info:
+   >   x-spec-id: admin-service
+   > paths:
+   >   /users:
+   >     get: ...
+   > ```
+   > Now you can reference these endpoints specifically as `user-service/users` and `admin-service/users`
+
 ## How It Works
 
 1. The server scans the specified directory for OpenAPI specification files
@@ -79,6 +120,70 @@ This server implements the Model Context Protocol, making it compatible with LLM
 - Cursor IDE
 - Other MCP-compatible code editors
 - LLM-powered development tools
+
+## Tools
+
+1. `refresh-api-catalog`
+   - Refresh the API catalog
+   - Returns: Success message when catalog is refreshed
+
+2. `get-api-catalog`
+   - Get the API catalog, the catalog contains metadata about all openapi specifications, their operations and schemas
+   - Returns: Complete API catalog with all specifications, operations, and schemas
+
+3. `search-api-operations`
+   - Search for operations across specifications
+   - Inputs:
+     - `query` (string): Search query
+     - `specId` (optional string): Specific API specification ID to search within
+   - Returns: Matching operations from the API catalog
+
+4. `search-api-schemas`
+   - Search for schemas across specifications
+   - Inputs:
+     - `query` (string): Search query
+   - Returns: Matching schemas from the API catalog
+
+5. `load-api-operation-by-operationId`
+   - Load an operation by operationId
+   - Inputs:
+     - `specId` (string): API specification ID
+     - `operationId` (string): Operation ID to load
+   - Returns: Complete operation details
+
+6. `load-api-operation-by-path-and-method`
+   - Load an operation by path and method
+   - Inputs:
+     - `specId` (string): API specification ID
+     - `path` (string): API endpoint path
+     - `method` (string): HTTP method
+   - Returns: Complete operation details
+
+7. `load-api-schema-by-schemaName`
+   - Load a schema by schemaName
+   - Inputs:
+     - `specId` (string): API specification ID
+     - `schemaName` (string): Name of the schema to load
+   - Returns: Complete schema details
+
+## Roadmap
+
+1. **Semantic Search**
+   - Implement semantic search capabilities for API operations and schemas
+   - Enable natural language queries to find relevant API endpoints
+   - Improve search accuracy using embeddings and vector similarity
+
+2. **Code Template Generation**
+   - Add support for code templates based on API specifications
+   - Generate boilerplate code for API integrations
+   - Provide language-specific client code generation
+   - Support multiple programming languages and frameworks
+
+3. **Community Contributions**
+   - Have ideas to improve the MCP OpenAPI server?
+   - Want to add new features or enhance existing ones?
+   - Submit your ideas through issues or pull requests
+   - Join the discussion and help shape the future of API integration with LLMs
 
 ## Contributing
 
