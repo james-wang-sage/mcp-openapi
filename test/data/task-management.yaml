@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  title: Task Management API
+  version: 1.0.0
+  description: A Task Management API with complex parameter schemas and empty allOf combinations
+  x-spec-id: task-management
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+
+    TaskStatus:
+      type: string
+      enum:
+        - TODO
+        - IN_PROGRESS
+        - BLOCKED
+        - COMPLETED
+        - CANCELLED
+
+    TaskPriority:
+      type: string
+      enum:
+        - LOW
+        - MEDIUM
+        - HIGH
+        - CRITICAL
+
+    BaseTask:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - status
+        - priority
+
+    Task:
+      allOf:
+        - $ref: '#/components/schemas/BaseTask'
+        - type: object
+          properties:
+            assignee:
+              type: string
+              format: email
+            dueDate:
+              type: string
+              format: date
+            tags:
+              type: array
+              items:
+                type: string
+            subtasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/BaseTask'
+
+    EmptyAllOfTask:
+      allOf: []
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+
+    TaskFilter:
+      type: object
+      properties:
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskStatus'
+        priority:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskPriority'
+        assignee:
+          type: string
+          format: email
+        dueDateFrom:
+          type: string
+          format: date
+        dueDateTo:
+          type: string
+          format: date
+        tags:
+          type: array
+          items:
+            type: string
+
+paths:
+  /tasks:
+    get:
+      summary: List tasks
+      operationId: listTasks
+      parameters:
+        - name: filter
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskFilter'
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid filter parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Create task
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid task data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/{taskId}/status:
+    put:
+      summary: Update task status
+      operationId: updateTaskStatus
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/TaskStatus'
+              required:
+                - status
+      responses:
+        '200':
+          description: Task status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
