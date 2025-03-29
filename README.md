@@ -185,6 +185,67 @@ This server implements the Model Context Protocol, making it compatible with LLM
    - Submit your ideas through issues or pull requests
    - Join the discussion and help shape the future of API integration with LLMs
 
+## Example Prompts in Cursor
+
+Here are some example prompts you can use in Cursor IDE to interact with your APIs:
+
+1. **Explore Available APIs**
+   ```
+   "Show me all available APIs in the catalog with their operations"
+   "List all API specifications and their endpoints"
+   ```
+
+2. **API Operation Details**
+   ```
+   "Show me the details of the create pet API endpoint"
+   "What are the required parameters for creating a new pet?"
+   "Explain the response schema for the pet creation endpoint"
+   ```
+
+3. **Schema and Mock Data**
+   ```
+   "Generate mock data for the Pet schema"
+   "Create a valid request payload for the create pet endpoint"
+   "Show me examples of valid pet objects based on the schema"
+   ```
+
+4. **Code Generation**
+   ```
+   "Generate an Axios client for the create pet API"
+   "Create a TypeScript interface for the Pet schema"
+   "Write a React hook that calls the create pet endpoint"
+   ```
+
+5. **API Integration Assistance**
+   ```
+   "Help me implement error handling for the pet API endpoints"
+   "Generate unit tests for the pet API client"
+   "Create a service class that encapsulates all pet-related API calls"
+   ```
+
+6. **Documentation and Usage**
+   ```
+   "Show me example usage of the pet API with curl"
+   "Generate JSDoc comments for the pet API client methods"
+   "Create a README section explaining the pet API integration"
+   ```
+
+7. **Validation and Types**
+   ```
+   "Generate Zod validation schema for the Pet model"
+   "Create TypeScript types for all pet-related API responses"
+   "Help me implement request payload validation for the pet endpoints"
+   ```
+
+8. **API Search and Discovery**
+   ```
+   "Find all endpoints related to pet management"
+   "Show me all APIs that accept file uploads"
+   "List all endpoints that return paginated responses"
+   ```
+
+These prompts demonstrate how to leverage the MCP server's capabilities for API development. Feel free to adapt them to your specific needs or combine them for more complex tasks.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. 
