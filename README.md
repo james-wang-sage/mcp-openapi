@@ -50,19 +50,23 @@ reapi-mcp-openapi --dir /path/to/specs
 To integrate the MCP OpenAPI server with Cursor IDE, you have two options for configuration locations:
 
 ### Option 1: Project-specific Configuration (Recommended)
-Create a `.cursor/mcp.json` file in your project directory:
+Create a `.cursor/mcp.json` file in your project directory. This option is recommended as it allows you to:
+- Organize API specifications by project
+- Maintain different sets of specs for different projects
 
 ```json
 {
   "mcpServers": {
     "@reapi/mcp-openapi": {
       "command": "npx",
-      "args": ["-y", "@reapi/mcp-openapi", "--dir", "/path/to/your/specs"],
+      "args": ["-y", "@reapi/mcp-openapi", "--dir", "./specs"],
       "env": {}
     }
   }
 }
 ```
+
+> **Tip**: Using a relative path like `./specs` makes the configuration portable and easier to share across team members.
 
 ### Option 2: Global Configuration
 Create or edit `~/.cursor/mcp.json` in your home directory to make the server available across all projects:
