@@ -139,14 +139,6 @@ The server is now ready to use. When you add new OpenAPI specifications to your 
    - Generate API-aware code snippets
 
 
-## Integration
-
-This server implements the Model Context Protocol, making it compatible with LLM-powered development tools. It's designed to work seamlessly with:
-
-- Cursor IDE
-- Other MCP-compatible code editors
-- LLM-powered development tools
-
 ## Tools
 
 1. `refresh-api-catalog`
@@ -195,24 +187,19 @@ This server implements the Model Context Protocol, making it compatible with LLM
 ## Roadmap
 
 1. **Semantic Search**
-   - Implement semantic search capabilities for API operations and schemas
-   - Enable natural language queries to find relevant API endpoints
-   - Improve search accuracy using embeddings and vector similarity
+   - Enable natural language queries for API operations and schemas
+   - Improve search accuracy with semantic understanding
 
 2. **Remote Specs Sync**
    - Support syncing OpenAPI specifications from remote sources
 
-3. **Code Template Generation**
-   - Add support for code templates based on API specifications
-   - Generate boilerplate code for API integrations
-   - Provide language-specific client code generation
-   - Support multiple programming languages and frameworks
+3. **Code Templates**
+   - Expose code templates through MCP protocol
+   - Provide reference patterns for LLM code generation
 
 4. **Community Contributions**
-   - Have ideas to improve the MCP OpenAPI server?
-   - Want to add new features or enhance existing ones?
-   - Submit your ideas through issues or pull requests
-   - Join the discussion and help shape the future of API integration with LLMs
+   - Submit feature requests and bug reports
+   - Contribute to improve the server
 
 ## Example Prompts in Cursor
 
