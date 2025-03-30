@@ -20,39 +20,6 @@ export class SpecScanError extends Error {
 }
 
 /**
- * Entry in the specification catalog
- */
-export interface SpecCatalogEntry {
-  /** Unique identifier */
-  id: string;
-  /** Human readable title */
-  title: string;
-  /** Description of the specification */
-  description: string;
-}
-
-/**
- * Scan a folder for OpenAPI specifications
- * Uses async generator for memory-efficient processing
- * The scanner can use cache strategy to determine if a file has changed
- * and only process files that have changed
- *
- * The default implementation will scan all files in the folder
- * and yield them one at a time
- *
- * The scanner can be extended to use a custom cache strategy
- * or to add additional processing logic
- */
-export interface SpecScanner {
-  /**
-   * Scan a folder for OpenAPI specs and yield them one at a time
-   * This allows for memory-efficient processing of large specs
-   * @param folderPath Path to folder containing OpenAPI specs
-   */
-  scan(folderPath: string): AsyncGenerator<SpecScanResult, void, unknown>;
-}
-
-/**
  * Default implementation of the SpecScanner interface
  * Scans a directory for OpenAPI specification files (JSON or YAML)
  * and processes them using the provided SpecProcessor
