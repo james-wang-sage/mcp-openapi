@@ -52,6 +52,8 @@ Create a `.cursor/mcp.json` file in your project directory. This option is recom
 > **Tip**: Using a relative path like `./specs` makes the configuration portable and easier to share across team members.
 > 
 > **Note**: We recommend using `@latest` tag as we frequently update the server with new features and improvements.
+>
+> **Important**: Project-specific configuration helps manage LLM context limits. When all specifications are placed in a single folder, the combined metadata could exceed the LLM's context window, leading to errors. Organizing specs by project keeps the context size manageable.
 
 ### Option 2: Global Configuration
 Create or edit `~/.cursor/mcp.json` in your home directory to make the server available across all projects:
