@@ -14,7 +14,7 @@ const program = new Command();
 program
   .name('@reapi/mcp-openapi')
   .description('MCP OpenAPI CLI tool')
-  .version('1.0.0')
+  .version('0.0.2')
   .option('-d, --dir <path>', 'Specify the directory containing OpenAPI specifications', process.cwd())
   .option('--catalog-dir <path>', 'Specify the catalog directory', '_catalog')
   .option('--dereferenced-dir <path>', 'Specify the dereferenced directory', '_dereferenced')

@@ -34,7 +34,7 @@ export class McpService {
     this.logger.info('Creating MCP server');
     const mcpServer = new McpServer({
       name: "reapi-mcp-server",
-      version: "0.0.1",
+      version: "0.0.2",
     });
 
     this.setUpTools(mcpServer);
