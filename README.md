@@ -68,8 +68,6 @@ Create or edit `~/.cursor/mcp.json` in your home directory to make the server av
 }
 ```
 
-> **Note**: Use `@latest` tag to ensure you always get the most recent version with latest features and improvements.
-
 ### Enable in Cursor Settings
 
 After adding the configuration:
@@ -79,6 +77,8 @@ After adding the configuration:
 3. Enable the @reapi/mcp-openapi server
 4. Click the refresh icon next to the server to apply changes
 
+> **Note**: By default, Cursor requires confirmation for each MCP tool execution. If you want to allow automatic execution without confirmation, you can enable [Yolo mode](https://docs.cursor.com/context/model-context-protocol#yolo-mode) in Cursor settings.
+
 The server is now ready to use. When you add new OpenAPI specifications to your directory, you can refresh the catalog by:
 
 1. Opening Cursor's chat panel
@@ -87,7 +87,6 @@ The server is now ready to use. When you add new OpenAPI specifications to your 
    "Please refresh the API catalog"
    "Reload the OpenAPI specifications"
    ```
-
 
 ### OpenAPI Specification Requirements
 
