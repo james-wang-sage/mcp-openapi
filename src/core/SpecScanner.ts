@@ -2,6 +2,8 @@ import fs from "fs/promises";
 import { OpenAPIV3 } from "openapi-types";
 import path from "path";
 import { parse } from "yaml";
+// Using require for swagger2openapi since it doesn't have TypeScript types
+const swagger2openapi = require('swagger2openapi');
 import { ISpecProcessor } from "./interfaces/ISpecProcessor";
 import { ISpecScanner, SpecFileType, SpecScanResult } from "./interfaces/ISpecScanner";
 
@@ -131,17 +133,48 @@ export class DefaultSpecScanner implements ISpecScanner {
   }
 
   /**
-   * Parses the spec content based on the file type
+   * Parses the spec content based on the file type and converts Swagger 2.0 to OpenAPI 3.0 if needed
    * @param content - Raw file content
    * @param fileType - Type of the file (json or yaml)
-   * @returns Parsed spec object
+   * @returns Parsed and potentially converted spec object
    */
   private async parseSpec(
     content: string,
     fileType: "json" | "yaml"
   ): Promise<unknown> {
     try {
-      return fileType === "json" ? JSON.parse(content) : parse(content);
+      const parsedContent = fileType === "json" ? JSON.parse(content) : parse(content);
+      
+      // Check if this is a Swagger 2.0 spec
+      if (typeof parsedContent === 'object' && 
+          parsedContent !== null && 
+          'swagger' in parsedContent && 
+          parsedContent.swagger === '2.0') {
+        
+        // Convert Swagger 2.0 to OpenAPI 3.0
+        const options = {
+          patch: true,  // fix up small errors in the source
+          warnOnly: true,  // do not throw on non-patchable errors
+        };
+        
+        try {
+          const converted = await new Promise<OpenAPIV3.Document>((resolve, reject) => {
+            swagger2openapi.convertObj(parsedContent, options, (err: Error | null, result: { openapi: OpenAPIV3.Document }) => {
+              if (err) {
+                reject(new Error(`Swagger 2.0 conversion failed: ${err.message}`));
+              } else {
+                resolve(result.openapi);
+              }
+            });
+          });
+          
+          return converted;
+        } catch (error) {
+          throw new Error(`Failed to convert Swagger 2.0 spec: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      }
+      
+      return parsedContent;
     } catch (error) {
       throw new Error(
         `Failed to parse ${fileType} content: ${error instanceof Error ? error.message : String(error)}`
