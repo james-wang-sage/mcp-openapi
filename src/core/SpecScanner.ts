@@ -1,11 +1,14 @@
 import fs from "fs/promises";
 import { OpenAPIV3 } from "openapi-types";
 import path from "path";
+import swagger2openapi from "swagger2openapi";
 import { parse } from "yaml";
-// Using require for swagger2openapi since it doesn't have TypeScript types
-const swagger2openapi = require('swagger2openapi');
 import { ISpecProcessor } from "./interfaces/ISpecProcessor";
-import { ISpecScanner, SpecFileType, SpecScanResult } from "./interfaces/ISpecScanner";
+import {
+  ISpecScanner,
+  SpecFileType,
+  SpecScanResult,
+} from "./interfaces/ISpecScanner";
 
 /**
  * Custom error class for spec scanning related errors
@@ -17,7 +20,7 @@ export class SpecScanError extends Error {
     public readonly cause?: Error
   ) {
     super(message);
-    this.name = 'SpecScanError';
+    this.name = "SpecScanError";
   }
 }
 
@@ -39,12 +42,12 @@ export class DefaultSpecScanner implements ISpecScanner {
   ): AsyncGenerator<SpecScanResult, void, unknown> {
     // Validate input
     if (!folderPath) {
-      throw new Error('folderPath is required');
+      throw new Error("folderPath is required");
     }
 
     try {
       const files = await fs.readdir(folderPath);
-      
+
       for (const file of files) {
         try {
           const result = await this.processFile(folderPath, file);
@@ -56,7 +59,7 @@ export class DefaultSpecScanner implements ISpecScanner {
             filename: file,
             specId: file,
             spec: {} as OpenAPIV3.Document, // Empty spec for error cases
-            error: error instanceof Error ? error : new Error(String(error))
+            error: error instanceof Error ? error : new Error(String(error)),
           };
         }
       }
@@ -86,15 +89,15 @@ export class DefaultSpecScanner implements ISpecScanner {
     }
 
     const filePath = path.join(folderPath, filename);
-    
+
     try {
       const content = await fs.readFile(filePath, "utf-8");
       const specObject = await this.parseSpec(content, fileType);
-      
+
       // Validate basic spec structure
       if (!this.isValidSpecObject(specObject)) {
         throw new SpecScanError(
-          'Invalid OpenAPI specification format',
+          "Invalid OpenAPI specification format",
           filename
         );
       }
@@ -105,7 +108,7 @@ export class DefaultSpecScanner implements ISpecScanner {
       return {
         filename,
         spec: processedSpec,
-        specId
+        specId,
       };
     } catch (error) {
       throw new SpecScanError(
@@ -143,41 +146,60 @@ export class DefaultSpecScanner implements ISpecScanner {
     fileType: "json" | "yaml"
   ): Promise<unknown> {
     try {
-      const parsedContent = fileType === "json" ? JSON.parse(content) : parse(content);
-      
+      const parsedContent =
+        fileType === "json" ? JSON.parse(content) : parse(content);
+
       // Check if this is a Swagger 2.0 spec
-      if (typeof parsedContent === 'object' && 
-          parsedContent !== null && 
-          'swagger' in parsedContent && 
-          parsedContent.swagger === '2.0') {
-        
+      if (
+        typeof parsedContent === "object" &&
+        parsedContent !== null &&
+        "swagger" in parsedContent &&
+        parsedContent.swagger === "2.0"
+      ) {
         // Convert Swagger 2.0 to OpenAPI 3.0
         const options = {
-          patch: true,  // fix up small errors in the source
-          warnOnly: true,  // do not throw on non-patchable errors
+          patch: true, // fix up small errors in the source
+          warnOnly: true, // do not throw on non-patchable errors
         };
-        
+
         try {
-          const converted = await new Promise<OpenAPIV3.Document>((resolve, reject) => {
-            swagger2openapi.convertObj(parsedContent, options, (err: Error | null, result: { openapi: OpenAPIV3.Document }) => {
-              if (err) {
-                reject(new Error(`Swagger 2.0 conversion failed: ${err.message}`));
-              } else {
-                resolve(result.openapi);
-              }
-            });
-          });
-          
+          const converted = await new Promise<OpenAPIV3.Document>(
+            (resolve, reject) => {
+              swagger2openapi.convertObj(
+                parsedContent,
+                options,
+                (
+                  err: Error | null,
+                  result: { openapi: OpenAPIV3.Document }
+                ) => {
+                  if (err) {
+                    reject(
+                      new Error(`Swagger 2.0 conversion failed: ${err.message}`)
+                    );
+                  } else {
+                    resolve(result.openapi);
+                  }
+                }
+              );
+            }
+          );
+
           return converted;
         } catch (error) {
-          throw new Error(`Failed to convert Swagger 2.0 spec: ${error instanceof Error ? error.message : String(error)}`);
+          throw new Error(
+            `Failed to convert Swagger 2.0 spec: ${
+              error instanceof Error ? error.message : String(error)
+            }`
+          );
         }
       }
-      
+
       return parsedContent;
     } catch (error) {
       throw new Error(
-        `Failed to parse ${fileType} content: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to parse ${fileType} content: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
     }
   }
@@ -189,10 +211,10 @@ export class DefaultSpecScanner implements ISpecScanner {
    */
   private isValidSpecObject(spec: unknown): spec is OpenAPIV3.Document {
     return (
-      typeof spec === 'object' &&
+      typeof spec === "object" &&
       spec !== null &&
-      'info' in spec &&
-      typeof spec.info === 'object' &&
+      "info" in spec &&
+      typeof spec.info === "object" &&
       spec.info !== null
     );
   }
@@ -204,6 +226,6 @@ export class DefaultSpecScanner implements ISpecScanner {
    * @returns The extracted spec ID
    */
   private extractSpecId(spec: OpenAPIV3.Document, defaultId: string): string {
-    return (spec.info as any)['x-spec-id'] || defaultId;
+    return (spec.info as any)["x-spec-id"] || defaultId;
   }
 }
