@@ -1,6 +1,6 @@
 {
   "name": "@reapi/mcp-openapi",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "MCP (Model Context Protocol) server for OpenAPI specifications - loads and serves multiple OpenAPI specs to enable LLM-powered IDE integrations",
   "main": "./dist/index.mjs",
   "type": "module",

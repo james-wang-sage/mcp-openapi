@@ -1,9 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { stringify } from "yaml";
 import { z } from "zod";
-import { SpecServiceError } from "./core/SpecService";
 import { ISpecExplorer } from "./core/interfaces/ISpecService";
-import { Logger, ConsoleLogger } from "./core/Logger";
+import { ConsoleLogger, Logger } from "./core/Logger";
+
+export const VERSION = "0.0.3";
 
 export class McpService {
   private readonly logger: Logger;
@@ -34,7 +35,7 @@ export class McpService {
     this.logger.info('Creating MCP server');
     const mcpServer = new McpServer({
       name: "reapi-mcp-server",
-      version: "0.0.2",
+      version: VERSION,
     });
 
     this.setUpTools(mcpServer);
