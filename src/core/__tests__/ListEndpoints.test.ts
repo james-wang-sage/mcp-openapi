@@ -18,6 +18,49 @@ interface ApiEndpoint {
 }
 
 /**
+ * Process an operation and create an endpoint object
+ */
+function createEndpointFromOperation(
+  path: string,
+  method: string,
+  operation: OpenAPIV3.OperationObject,
+  specId: string
+): ApiEndpoint {
+  return {
+    path,
+    method,
+    operationId: operation.operationId,
+    summary: operation.summary,
+    description: operation.description,
+    specId
+  };
+}
+
+/**
+ * Extract endpoints from a single OpenAPI specification
+ */
+function extractEndpointsFromSpec(spec: OpenAPIV3.Document, specId: string): ApiEndpoint[] {
+  const endpoints: ApiEndpoint[] = [];
+  const methods = ['get', 'post', 'put', 'delete', 'patch', 'options', 'head', 'trace'];
+
+  // Iterate through all paths in the spec
+  Object.entries(spec.paths || {}).forEach(([path, pathItem]) => {
+    // Skip if pathItem is not defined or is a reference
+    if (!pathItem || '$ref' in pathItem) return;
+
+    // Check each HTTP method in the path
+    methods.forEach(method => {
+      const operation = pathItem[method as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject;
+      if (operation) {
+        endpoints.push(createEndpointFromOperation(path, method, operation, specId));
+      }
+    });
+  });
+
+  return endpoints;
+}
+
+/**
  * Lists all endpoints defined in OpenAPI specifications in a directory
  * @param dirPath Path to the directory containing OpenAPI specifications
  * @returns Array of API endpoints
@@ -29,43 +72,19 @@ async function listEndpoints(dirPath: string): Promise<ApiEndpoint[]> {
   // Create scanner and processor
   const specProcessor = new DefaultSpecProcessor();
   const specScanner = new DefaultSpecScanner(specProcessor);
-
-  // Scan the directory for OpenAPI specifications
   const endpoints: ApiEndpoint[] = [];
 
   try {
+    // Scan the directory for OpenAPI specifications
     for await (const result of specScanner.scan(dirPath)) {
       if (result.error) {
         logger.warn(`Error scanning file ${result.filename}: ${result.error.message}`);
         continue;
       }
 
-      const { spec, specId } = result;
-
-      // Extract endpoints from the specification
-      for (const path in spec.paths) {
-        const pathItem = spec.paths[path];
-
-        // Skip if pathItem is not defined or is a reference
-        if (!pathItem || '$ref' in pathItem) continue;
-
-        // Process each HTTP method in the path
-        const methods = ['get', 'post', 'put', 'delete', 'patch', 'options', 'head', 'trace'];
-        for (const method of methods) {
-          const operation = pathItem[method as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject;
-
-          if (operation) {
-            endpoints.push({
-              path,
-              method,
-              operationId: operation.operationId,
-              summary: operation.summary,
-              description: operation.description,
-              specId
-            });
-          }
-        }
-      }
+      // Extract endpoints from valid specifications
+      const specEndpoints = extractEndpointsFromSpec(result.spec, result.specId);
+      endpoints.push(...specEndpoints);
     }
 
     return endpoints;
