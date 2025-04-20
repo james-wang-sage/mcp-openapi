@@ -1,4 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
+import path from 'path';
 import { describe, expect, it } from 'vitest';
 import { ConsoleLogger } from '../Logger';
 import { DefaultSpecProcessor } from '../SpecProcessor';
@@ -75,12 +76,12 @@ async function listEndpoints(dirPath: string): Promise<ApiEndpoint[]> {
 }
 
 describe('List Endpoints', () => {
-  it('should list all endpoints from OpenAPI specifications in the specified directory', async () => {
-    // Use the directory path provided in the command line
-    const dirPath = '/Users/jameswang/projects/oauth2/app/source/openapispec/ap/paths';
+  // Use the test/data directory which already contains OpenAPI specs for testing
+  const testDir = path.join(process.cwd(), 'test/data');
 
+  it('should list all endpoints from OpenAPI specifications in the specified directory', async () => {
     // List all endpoints
-    const endpoints = await listEndpoints(dirPath);
+    const endpoints = await listEndpoints(testDir);
 
     // Log the results
     console.log('Found endpoints:');
@@ -97,6 +98,10 @@ describe('List Endpoints', () => {
     // Basic assertions
     expect(endpoints).toBeDefined();
     expect(Array.isArray(endpoints)).toBe(true);
+
+    // Verify some expected endpoints from the test data
+    expect(endpoints.some(e => e.operationId === 'listPets')).toBe(true);
+    expect(endpoints.some(e => e.operationId === 'createPet')).toBe(true);
 
     // Group endpoints by specification
     const endpointsBySpec = endpoints.reduce((acc, endpoint) => {
