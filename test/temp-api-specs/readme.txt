@@ -1,0 +1,1 @@
+This is a readme file, not an OpenAPI spec

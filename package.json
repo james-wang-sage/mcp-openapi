@@ -5,7 +5,8 @@
   "main": "./dist/index.mjs",
   "type": "module",
   "bin": {
-    "reapi-mcp-openapi": "./dist/cli.mjs"
+    "reapi-mcp-openapi": "./dist/cli.mjs",
+    "reapi-list-endpoints": "./dist/cli/list-endpoints.mjs"
   },
   "publishConfig": {
     "access": "public"
@@ -22,7 +23,8 @@
     "pretest": "node scripts/setup-test-data.js",
     "test": "LOG_ENABLED=true vitest run",
     "test:watch": "LOG_ENABLED=true vitest",
-    "test:coverage": "LOG_ENABLED=true vitest run --coverage"
+    "test:coverage": "LOG_ENABLED=true vitest run --coverage",
+    "list-endpoints": "tsx src/cli/list-endpoints.ts"
   },
   "keywords": [
     "openapi",
