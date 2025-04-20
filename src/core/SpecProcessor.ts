@@ -19,13 +19,25 @@ type SchemaOrRef = SchemaObject | ReferenceObject;
 
 export class DefaultSpecProcessor implements ISpecProcessor {
   async process(spec: OpenAPIV3.Document): Promise<OpenAPIV3.Document> {
-    // First dereference all $refs
-    const dereferencedSpec = (await $RefParser.dereference(spec, {
-      continueOnError: true,
-    })) as OpenAPIV3.Document;
+    try {
+      // First dereference all $refs
+      const dereferencedSpec = (await $RefParser.dereference(spec, {
+        continueOnError: true,
+        resolve: {
+          // Skip external references if they can't be resolved
+          external: false
+        }
+      })) as OpenAPIV3.Document;
 
-    // Then merge all allOf schemas
-    return this.mergeAllOfSchemas(dereferencedSpec);
+      // Then merge all allOf schemas
+      return this.mergeAllOfSchemas(dereferencedSpec);
+    } catch (error) {
+      // If dereferencing fails completely, return the original spec
+      console.warn(`Failed to dereference spec: ${error instanceof Error ? error.message : String(error)}`);
+
+      // Still try to merge allOf schemas in the original spec
+      return this.mergeAllOfSchemas(spec);
+    }
   }
 
   /**

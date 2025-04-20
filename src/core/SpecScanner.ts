@@ -103,13 +103,27 @@ export class DefaultSpecScanner implements ISpecScanner {
       }
 
       const specId = this.extractSpecId(specObject, filename);
-      const processedSpec = await this.specProcessor.process(specObject);
 
-      return {
-        filename,
-        spec: processedSpec,
-        specId,
-      };
+      try {
+        // Try to process the spec, but don't fail if processing fails
+        const processedSpec = await this.specProcessor.process(specObject);
+
+        return {
+          filename,
+          spec: processedSpec,
+          specId,
+        };
+      } catch (processingError) {
+        // If processing fails, return the original spec with a warning
+        console.warn(`Warning: Failed to fully process spec ${filename}: ${processingError instanceof Error ? processingError.message : String(processingError)}`);
+
+        return {
+          filename,
+          spec: specObject,
+          specId,
+          error: processingError instanceof Error ? processingError : new Error(String(processingError)),
+        };
+      }
     } catch (error) {
       throw new SpecScanError(
         `Failed to process spec file: ${filename}`,
@@ -148,6 +162,18 @@ export class DefaultSpecScanner implements ISpecScanner {
     try {
       const parsedContent =
         fileType === "json" ? JSON.parse(content) : parse(content);
+
+      // Check if this is a valid OpenAPI 3.0 spec
+      if (
+        typeof parsedContent === "object" &&
+        parsedContent !== null &&
+        "openapi" in parsedContent &&
+        "paths" in parsedContent &&
+        "info" in parsedContent
+      ) {
+        // It's already a valid OpenAPI 3.0 spec, return it
+        return parsedContent;
+      }
 
       // Check if this is a Swagger 2.0 spec
       if (
@@ -210,13 +236,32 @@ export class DefaultSpecScanner implements ISpecScanner {
    * @returns true if the spec has the basic required structure
    */
   private isValidSpecObject(spec: unknown): spec is OpenAPIV3.Document {
-    return (
+    // Basic validation to ensure it's an object with required OpenAPI fields
+    const isBasicValid = (
       typeof spec === "object" &&
       spec !== null &&
       "info" in spec &&
       typeof spec.info === "object" &&
       spec.info !== null
     );
+
+    if (!isBasicValid) {
+      return false;
+    }
+
+    // Check for OpenAPI version
+    const hasOpenApiVersion = (
+      "openapi" in spec ||
+      ("swagger" in spec && spec.swagger === "2.0")
+    );
+
+    // For OpenAPI 3.0, paths is required
+    // For Swagger 2.0, we'll be more lenient
+    if ("openapi" in spec && !("paths" in spec)) {
+      return false;
+    }
+
+    return hasOpenApiVersion;
   }
 
   /**
@@ -226,6 +271,6 @@ export class DefaultSpecScanner implements ISpecScanner {
    * @returns The extracted spec ID
    */
   private extractSpecId(spec: OpenAPIV3.Document, defaultId: string): string {
-    return (spec.info as any)["x-spec-id"] || defaultId;
+    return (spec.info as any)["x-spec-id"] ?? defaultId;
   }
 }
