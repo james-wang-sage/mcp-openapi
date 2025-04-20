@@ -19,6 +19,7 @@
   "scripts": {
     "build": "unbuild",
     "debug": "SERVER_PORT=9000 LOG_ENABLED=true npx @modelcontextprotocol/inspector npx tsx src/index.ts",
+    "pretest": "node scripts/setup-test-data.js",
     "test": "LOG_ENABLED=true vitest run",
     "test:watch": "LOG_ENABLED=true vitest",
     "test:coverage": "LOG_ENABLED=true vitest run --coverage"

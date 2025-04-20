@@ -6,16 +6,14 @@ import { SimpleCache } from "./Cache";
 import { ConsoleLogger, Logger } from "./Logger";
 import { ISpecScanner } from "./interfaces/ISpecScanner";
 import {
-  ISpecStore,
-  ISpecExplorer,
-  SpecServiceConfig,
-  SpecCatalogEntry,
-  LoadSchemaResult,
-  LoadOperationResult,
-  IResultSerializer,
-  SpecUri,
-  SpecOperationEntry,
-  SpecSchemaEntry
+    ISpecExplorer,
+    ISpecStore,
+    LoadOperationResult,
+    LoadSchemaResult,
+    SpecCatalogEntry,
+    SpecOperationEntry,
+    SpecSchemaEntry,
+    SpecServiceConfig
 } from "./interfaces/ISpecService";
 
 /**
@@ -266,8 +264,18 @@ export class FileSystemSpecService implements ISpecStore, ISpecExplorer {
     if (!this.catalogPath) {
       throw new Error("FileSystemSpecService not initialized");
     }
-    const catalogPath = path.join(this.catalogPath, "catalog.json");
-    await fs.writeFile(catalogPath, JSON.stringify(catalog, null, 2));
+    try {
+      await this.ensureDirectory(this.catalogPath);
+      const catalogPath = path.join(this.catalogPath, "catalog.json");
+      await fs.writeFile(catalogPath, JSON.stringify(catalog, null, 2));
+    } catch (error) {
+      this.logger.error({ error }, "Failed to save spec catalog");
+      throw new SpecServiceError(
+        "Failed to save spec catalog",
+        "PERSIST_ERROR",
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
   }
 
   async loadSpecCatalog(): Promise<SpecCatalogEntry[]> {
